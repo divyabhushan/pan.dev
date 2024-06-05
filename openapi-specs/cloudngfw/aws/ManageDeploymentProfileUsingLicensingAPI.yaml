@@ -1,0 +1,189 @@
+openapi: 3.0.1
+info:
+  title: Software NGFW Licensing API
+  description: API to manage and retrieve information about credit pools and deployment profiles in Palo Alto Networks CSP account.
+  version: 1.0.0
+servers:
+  - url: https://api.paloaltonetworks.com/tms/v1
+paths:
+  /creditPool:
+    get:
+      summary: Get All Credit Pools
+      operationId: creditPool
+      description: Use this API to retrieve information about all credit pools associated with your CSP account.
+      parameters:
+        - name: token
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response with the list of all credit pools
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreditPoolsResponse"
+  /creditPool/{creditPoolId}:
+    get:
+      summary: Get a Credit Pool by Credit Pool ID
+      parameters:
+        - name: token
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: creditPoolId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful response with the details of the specified credit pool
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreditPoolResponse"
+  /creditPool/{creditPoolId}/deploymentProfile:
+    get:
+      summary: Get All Deployment Profiles in a Credit Pool
+      parameters:
+        - name: token
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: creditPoolId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful response with the list of deployment profiles in the specified credit pool
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeploymentProfilesResponse"
+  /v1/deploymentProfile/{authCode}:
+    get:
+      summary: Get a Deployment Profile
+      parameters:
+        - name: token
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: authCode
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response with the details of the specified deployment profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeploymentProfileResponse"
+  /v1/deployment-profile/{authCode}:
+    delete:
+      summary: Delete a Deployment Profile
+      parameters:
+        - name: token
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: authCode
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response indicating the deployment profile was deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteResponse"
+components:
+  schemas:
+    CreditPool:
+      type: object
+      properties:
+        creditPoolId:
+          type: integer
+        poolName:
+          type: string
+        supportType:
+          type: string
+        expirationDate:
+          type: string
+        totalCredits:
+          type: number
+        creditsAllocated:
+          type: number
+        creditsConsumed:
+          type: number
+        creditsAvailable:
+          type: number
+    CreditPoolsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/CreditPool"
+    CreditPoolResponse:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/CreditPool"
+    DeploymentProfile:
+      type: object
+      properties:
+        profileName:
+          type: string
+        dAuthCode:
+          type: string
+        type:
+          type: string
+        panOsVersion:
+          type: string
+        creditsAllocated:
+          type: number
+        creditsConsumed:
+          type: number
+        vCpuConsumed:
+          type: integer
+        vCpuAllocated:
+          type: integer
+        fWsDeployed:
+          type: integer
+        fWsPlanned:
+          type: integer
+        status:
+          type: string
+    DeploymentProfilesResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/DeploymentProfile"
+    DeploymentProfileResponse:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/DeploymentProfile"
+    DeleteResponse:
+      type: object
+      properties:
+        isDeleted:
+          type: boolean
+        dAuthcode:
+          type: string
+        message:
+          type: string
